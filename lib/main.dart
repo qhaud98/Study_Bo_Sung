@@ -1,68 +1,91 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-void main() => runApp(App());
+void main() => runApp(Imp());
 
-class App extends StatelessWidget {
+class Imp extends StatelessWidget {
+  var ID, Ps1, Ps2;
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: "demo",
-      home: home(title: "Future Build EX"),
+    return MultiProvider(
+      providers: [
+        Provider<String>.value(value: '$ID'),
+        Provider<String>.value(value: '$Ps1'),
+        Provider<String>.value(value: '$Ps2'),
+      ],
+      child: MaterialApp(
+        title: "Login Demo",
+        initialRoute: '/LoginPage',
+        routes: {
+          '/LoginPage': (context) => LoginPage(),
+          '/HomePage': (context) => HomePage(),
+        },
+      ),
     );
   }
 }
 
-class home extends StatefulWidget {
-  home({Key key, this.title}) : super(key: key);
-  final String title;
+class LoginPage extends StatefulWidget {
   @override
-  _homeState createState() => _homeState();
+  _LoginPageState createState() => _LoginPageState();
 }
 
-class _homeState extends State<home> {
+class _LoginPageState extends State<LoginPage> {
+  var IDdata;
+  var ID;
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
+    ID = Provider.of<String>(context, listen: false);
+    return MaterialApp(
+        home: Scaffold(
+      appBar: AppBar(),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text("come data"),
-            FutureBuilder(
-              future: _fetch1(),
-              builder: (BuildContext context, AsyncSnapshot snapshot) {
-                if (snapshot.hasData == false) {
-                  return CircularProgressIndicator();
-                } else if (snapshot.hasError) {
-                  return Padding(
-                    padding: const EdgeInsets.all(8),
-                    child: Text(
-                      'Error : ${snapshot.error}',
-                      style: TextStyle(fontSize: 15),
-                    ),
-                  );
-                } else {
-                  return Padding(
-                    padding: const EdgeInsets.all(8),
-                    child: Text(
-                      snapshot.data.toString(),
-                      style: TextStyle(fontSize: 15),
-                    ),
-                  );
-                }
-              },
-            ),
-          ],
+        child: Container(
+          height: 300,
+          width: 300,
+          child: Column(
+            children: [
+              TextField(
+                decoration: InputDecoration(hintText: "ID"),
+                onSubmitted: (String IDdata) {
+                  setState(() {
+                    ID = IDdata;
+                  });
+                },
+              ),
+              ElevatedButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/HomePage');
+                  },
+                  child: Text('$ID'))
+            ],
+          ),
+        ),
+      ),
+    ));
+  }
+}
+
+class HomePage extends StatefulWidget {
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  var IDdata;
+
+  var ID;
+
+  @override
+  Widget build(BuildContext context) {
+    IDdata = Provider.of<String>(context, listen: false);
+    return MaterialApp(
+      home: Scaffold(
+        body: Center(
+          child: Text("YOUR ID : $IDdata"),
         ),
       ),
     );
   }
-}
-
-Future<String> _fetch1() async {
-  await Future.delayed(Duration(seconds: 2));
-  return 'Call Data';
 }
