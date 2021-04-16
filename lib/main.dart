@@ -1,44 +1,68 @@
-import 'dart:convert';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 
-void main() => runApp(RestApp());
+void main() => runApp(App());
 
-class RestApp extends StatelessWidget {
+class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(),
-        body: Center(
-          child: Column(
-            children: [
-              Icon(CupertinoIcons.drop),
-              ElevatedButton(onPressed: () {}, child: Text("demo"))
-            ],
-          ),
+      title: "demo",
+      home: home(title: "Future Build EX"),
+    );
+  }
+}
+
+class home extends StatefulWidget {
+  home({Key key, this.title}) : super(key: key);
+  final String title;
+  @override
+  _homeState createState() => _homeState();
+}
+
+class _homeState extends State<home> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.title),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text("come data"),
+            FutureBuilder(
+              future: _fetch1(),
+              builder: (BuildContext context, AsyncSnapshot snapshot) {
+                if (snapshot.hasData == false) {
+                  return CircularProgressIndicator();
+                } else if (snapshot.hasError) {
+                  return Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: Text(
+                      'Error : ${snapshot.error}',
+                      style: TextStyle(fontSize: 15),
+                    ),
+                  );
+                } else {
+                  return Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: Text(
+                      snapshot.data.toString(),
+                      style: TextStyle(fontSize: 15),
+                    ),
+                  );
+                }
+              },
+            ),
+          ],
         ),
       ),
     );
   }
 }
 
-void RestApi_Get() async {
-  http.Response response = await http.get(
-      Uri.encodeFull('https://github.com/qhaud98/sdf_project_0413'),
-      headers: {"Accept": "application/json"});
-  Map<String, dynamic> responseBodyMap = jsonDecode(response.body);
-  print(response.body);
-  print(responseBodyMap["restapi"]);
-  debugPrint("restapi");
-}
-
-class JsonObject {
-  final String restapi;
-  JsonObject({this.restapi});
-  factory JsonObject.fromJson(Map<String, dynamic> json) {
-    return JsonObject(restapi: json['restapi'] as String);
-  }
+Future<String> _fetch1() async {
+  await Future.delayed(Duration(seconds: 2));
+  return 'Call Data';
 }
