@@ -1,68 +1,76 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 void main() => runApp(App());
 
 class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: "demo",
-      home: home(title: "Future Build EX"),
-    );
-  }
-}
-
-class home extends StatefulWidget {
-  home({Key key, this.title}) : super(key: key);
-  final String title;
-  @override
-  _homeState createState() => _homeState();
-}
-
-class _homeState extends State<home> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text("come data"),
-            FutureBuilder(
-              future: _fetch1(),
-              builder: (BuildContext context, AsyncSnapshot snapshot) {
-                if (snapshot.hasData == false) {
-                  return CircularProgressIndicator();
-                } else if (snapshot.hasError) {
-                  return Padding(
-                    padding: const EdgeInsets.all(8),
-                    child: Text(
-                      'Error : ${snapshot.error}',
-                      style: TextStyle(fontSize: 15),
-                    ),
-                  );
-                } else {
-                  return Padding(
-                    padding: const EdgeInsets.all(8),
-                    child: Text(
-                      snapshot.data.toString(),
-                      style: TextStyle(fontSize: 15),
-                    ),
-                  );
-                }
-              },
-            ),
-          ],
+    return GetMaterialApp(
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text('GetX demo'),
+        ),
+        body: Center(
+          child: Column(
+            children: [
+              Text(
+                'a',
+                style: TextStyle(fontSize: 60),
+              ),
+              ElevatedButton(
+                  onPressed: () {
+                    Get.to(SecondPage());
+                  },
+                  child: Text('button')),
+              ElevatedButton(
+                  onPressed: () {
+                    Get.snackbar(
+                      '제목',
+                      '안녕?',
+                      snackPosition: SnackPosition.BOTTOM,
+                    );
+                  },
+                  child: Text('snackbar')),
+              ElevatedButton(
+                  onPressed: () {
+                    Get.defaultDialog(middleText: '밥줘');
+                  },
+                  child: Text('alant')),
+              ElevatedButton(
+                  onPressed: () {
+                    Get.to(Tree());
+                  },
+                  child: Text('cupertino'))
+            ],
+          ),
         ),
       ),
     );
   }
 }
 
-Future<String> _fetch1() async {
-  await Future.delayed(Duration(seconds: 2));
-  return 'Call Data';
+class SecondPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('SecondPage'),
+      ),
+    );
+  }
+}
+
+class Tree extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return CupertinoApp(
+      home: new Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.green,
+        ),
+      ),
+    );
+  }
 }
